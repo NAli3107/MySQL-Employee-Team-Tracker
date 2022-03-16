@@ -31,7 +31,7 @@ CREATE TABLE employees(
     REFERENCES roles(id),
     ON DELETE SET NULL,
     PRIMARY KEY (id),
-    manage_id INT NOT NULL,
+    manager_id INT NOT NULL,
     FOREIGN KEY (manager_id),
     REFERENCES employees(id),
     ON DELETE SET NULL,
