@@ -317,7 +317,22 @@ function updateManager(){
   });
 };
 
-function employeeByDepartment()
+function employeeByDepartment(){
+  console.log('Showing employee by departments...\n');
+  const sql = `SELECT employees.first_name, 
+                      employees.last_name, 
+                      departments.name AS department
+               FROM employees 
+               LEFT JOIN roles ON employees.role_id = roles.id 
+               LEFT JOIN departments ON roles.department_id = departments.id`;
+
+  db.promise().query(sql, (err, res) => {
+    if (err) throw err; 
+    console.table(res); 
+    promptMenu();
+  });  
+}
+
 function deleteDepartment()
 function deleteRole()
 function deleteEmployee()
