@@ -37,6 +37,7 @@ const promptMenu = () => {
           "Add a role",
           "Add an employee",
           "Update an employee role",
+          "Update an employee manager",
           "Quit",
         ],
       },
@@ -64,6 +65,9 @@ const promptMenu = () => {
         case 'Update an employee role':
           updateEmployee();
           break;
+        case 'Update an employee manager':
+          updateManager();
+          break;
          
         default:
           db.end();
@@ -71,6 +75,7 @@ const promptMenu = () => {
     });
 };
 
+/* Function to show all departments */
 function renderDepartments(){
   console.log("All department...\n");
   db.query(`SELECT * FROM departments`, (err, res) => {
@@ -80,6 +85,7 @@ function renderDepartments(){
   })
 };
 
+/* Function to show all roles */
 function showRoles(){
   console.log("Showing all roles...\n");
   db.query(`SELECT * FROM roles LEFT JOIN departments ON roles.department_id = departments.id `, (err, res) => {
@@ -89,6 +95,7 @@ function showRoles(){
   })
 };
 
+/* Function to show all employees */
 function renderEmployees(){
   console.log("Showing all employees...\n");
   db.query(`SELECT * FROM employees LEFT JOIN roles ON employees.role_id = roles.id`, (err, res) => {
@@ -98,6 +105,7 @@ function renderEmployees(){
 })
 };
 
+/* Function to add a department */
 function addDepartment(){
   inquirer.prompt([
     {
@@ -117,6 +125,7 @@ function addDepartment(){
 });
 };
 
+/* Function to add a role */
 function addRole(){
   db.query(`SELECT * FROM departments;`, (err, res) => {
     if (err) throw err;
@@ -154,6 +163,7 @@ function addRole(){
 })
 };
 
+/* Function to add an employee */
 function addEmployee(){
   db.query(`SELECT * FROM roles;`, (err, res) => {
     if (err) throw err;
@@ -192,13 +202,6 @@ function addEmployee(){
                 role_id: answers.role,
                 manager_id: answers.manager,
             }, 
-            // (err, res) => {
-            //     if (err) throw err;
-            // })
-            // db.query(`INSERT INTO roles SET ?`, 
-            // {
-            //     department_id: answers.deptName,
-            // }, 
             (err, res) => {
                 if (err) throw err;
                 console.log(`\n ${answers.firstName} ${answers.lastName} successfully added to database! \n`);
@@ -209,6 +212,7 @@ function addEmployee(){
 })
 }
 
+/* Function to update an employee */
 function updateEmployee(){
   db.query(`SELECT * FROM roles;`, (err, res) => {
     if (err) throw err;
@@ -249,7 +253,42 @@ function updateEmployee(){
   });
 };
 
-
+/* Function to update manager */
+function updateManager(){
+  db.query(`SELECT * FROM employees;`, (err, res) => {
+    if (err) throw err;
+    let employee = res.map(employees => ({name: employees.first_name + ' ' + employees.last_name, value: employees.id }));
+    inquirer.prompt([
+        {
+            type: 'list',  
+            name: 'employee',
+            message: 'Which employee would you like to update the manager for?',
+            choices: employee
+        },
+        {
+            type: 'list',
+            name: 'newManager',
+            message: 'Who should the employee\'s new manager be?',
+            choices: employee
+        },
+    ]).then((answers) => {
+        db.query(`UPDATE employees SET ? WHERE ?`, 
+        [
+            {
+                manager_id: answers.newManager,
+            },
+            {
+                id: answers.employee,
+            },
+        ], 
+        (err, res) => {
+            if (err) throw err;
+            console.log(`\n Successfully updated employee's manager in the database! \n`);
+            promptMenu();
+        })
+    });
+  });
+};
 
 
 
