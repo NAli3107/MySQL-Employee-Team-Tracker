@@ -4,8 +4,8 @@ const mysql = require("mysql2");
 /* Importing and requiring inquirer */
 const inquirer = require("inquirer");
 
-/* Importing and requiring console.table to print MySQL rows to the console */
-require("console.table");
+/* Importing and requiring console-table-printer to print MySQL rows to the console */
+const { printTable } = require('console-table-printer');
 
 /* Connect to database */
 const db = mysql.createConnection({
@@ -92,7 +92,7 @@ function renderDepartments() {
   console.log("Showing all departments...\n");
   db.query(`SELECT * FROM departments`, (err, res) => {
     if (err) throw err;
-    console.table(res);
+    printTable(res);
     promptMenu();
   });
 }
@@ -104,7 +104,7 @@ function showRoles() {
     `SELECT * FROM roles LEFT JOIN departments ON roles.department_id = departments.id `,
     (err, res) => {
       if (err) throw err;
-      console.table(res);
+      printTable(res);
       promptMenu();
     }
   );
@@ -117,7 +117,7 @@ function renderEmployees() {
     `SELECT * FROM employees LEFT JOIN roles ON employees.role_id = roles.id`,
     (err, res) => {
       if (err) throw err;
-      console.table(res);
+      printTable(res);
       promptMenu();
     }
   );
