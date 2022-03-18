@@ -104,15 +104,22 @@ const promptMenu = () => {
 };
 
 function renderDepartments(){
-  console.log("All department...");
-  db.query(`SELECT * FROM department ORDER BY department_id ASC;`, (err, res) => {
+  console.log("All department...\n");
+  db.query(`SELECT * FROM departments ORDER BY departments_id ASC;`, (err, res) => {
     if (err) throw err;
     console.table(res);
     promptMenu()
   })
 };
 
-function showRoles()
+function showRoles(){
+  console.log("Showing all roles...\n");
+  db.query(`SELECT roles.id, roles.title, roles.salary, departments.name, departments.id FROM roles JOIN departments ON roles.departments_id = departments.id ORDER BY roles.id ASC; `, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    promptMenu()
+  })
+}
 function renderEmployees()
 function addDepartment()
 function addRole()
