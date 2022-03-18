@@ -333,7 +333,33 @@ function employeeByDepartment(){
   });  
 }
 
-function deleteDepartment()
+function deleteDepartment(){
+  db.query(`SELECT * FROM departments ORDER BY department.id ASC;`, (err, res) => {
+    if (err) throw err;
+    let department = res.map(departments => ({name: departments.name, value: departments.id }));
+    inquirer.prompt([
+        {
+        type: 'list',
+        name: 'deptName',
+        message: 'Which department would you like to remove?',
+        choices: department
+        },
+    ]).then((answers) => {
+        db.query(`DELETE FROM departments WHERE ?`, 
+        [
+            {
+                department_id: answers.deptName,
+            },
+        ], 
+        (err, res) => {
+            if (err) throw err;
+            console.log(`\n Successfully removed the department from the database! \n`);
+            promptMenu();
+        })
+    });
+  });
+};
+
 function deleteRole()
 function deleteEmployee()
 
