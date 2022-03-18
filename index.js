@@ -281,7 +281,42 @@ function updateEmployee(){
   });
 };
 
-function updateManager()
+function updateManager(){
+  db.query(`SELECT * FROM employees;`, (err, res) => {
+    if (err) throw err;
+    let employee = res.map(employees => ({name: employees.first_name + ' ' + employees.last_name, value: employees.id }));
+    inquirer.prompt([
+        {
+            type: 'list',  
+            name: 'employee',
+            message: 'Which employee would you like to update the manager for?',
+            choices: employee
+        },
+        {
+            type: 'list',
+            name: 'newManager',
+            message: 'Who should the employee\'s new manager be?',
+            choices: employee
+        },
+    ]).then((answers) => {
+        db.query(`UPDATE employee SET ? WHERE ?`, 
+        [
+            {
+                manager_id: answers.newManager,
+            },
+            {
+                employee_id: answers.employee,
+            },
+        ], 
+        (err, res) => {
+            if (err) throw err;
+            console.log(`\n Successfully updated employee's manager in the database! \n`);
+            promptMenu();
+        })
+    });
+  });
+};
+
 function employeeByDepartment()
 function deleteDepartment()
 function deleteRole()
