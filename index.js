@@ -114,13 +114,22 @@ function renderDepartments(){
 
 function showRoles(){
   console.log("Showing all roles...\n");
-  db.query(`SELECT roles.id, roles.title, roles.salary, departments.name, departments.id FROM roles JOIN departments ON roles.departments_id = departments.id ORDER BY roles.id ASC; `, (err, res) => {
+  db.query(`SELECT roles.id, roles.title, roles.salary, departments.names, departments.id FROM roles JOIN departments ON roles.departments_id = departments.id ORDER BY roles.id ASC; `, (err, res) => {
     if (err) throw err;
     console.table(res);
     promptMenu()
   })
-}
-function renderEmployees()
+};
+
+function renderEmployees(){
+  console.log("Showing all employees...\n");
+  db.query(`SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.names, roles.salary, CONCAT(manager.first_name, " ", manager.last_name) AS Manager FROM LEFT JOIN role ON employees.role_id = roles.id LEFT JOIN employees  manager ON manager.id = employee.manager_id`, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    promptMenu()
+})
+};
+
 function addDepartment()
 function addRole()
 function addEmployee()
