@@ -16,24 +16,22 @@ CREATE TABLE roles(
     salary DECIMAL (7,2) NOT NULL,
     department_id INT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (department_id),
+    FOREIGN KEY (department_id)
     REFERENCES departments(id),
     ON DELETE SET NULL
 );
 
 
 CREATE TABLE employees(
-    id INT NOT NULL AUTO_INCREMENT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
     role_id INT NOT NULL,
-    FOREIGN KEY (role_id),
+    FOREIGN KEY (role_id)
     REFERENCES roles(id),
-    ON DELETE SET NULL,
-    PRIMARY KEY (id),
     manager_id INT NOT NULL,
-    FOREIGN KEY (manager_id),
-    REFERENCES employees(id),
-    ON DELETE SET NULL,
-)
+    FOREIGN KEY (manager_id)
+    REFERENCES employees(id)
+    ON DELETE CASCADE
+);
 

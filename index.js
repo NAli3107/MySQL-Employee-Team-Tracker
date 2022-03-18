@@ -103,7 +103,15 @@ const promptMenu = () => {
     });
 };
 
-function renderDepartments()
+function renderDepartments(){
+  console.log("All department...");
+  db.query(`SELECT * FROM department ORDER BY department_id ASC;`, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    promptMenu()
+  })
+};
+
 function showRoles()
 function renderEmployees()
 function addDepartment()
