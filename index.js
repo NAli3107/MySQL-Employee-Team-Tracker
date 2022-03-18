@@ -38,6 +38,9 @@ const promptMenu = () => {
           "Add an employee",
           "Update an employee role",
           "Update an employee manager",
+          "Delete a department",
+          "Delete a role",
+          "Delete an employee",
           "Quit",
         ],
       },
@@ -68,6 +71,15 @@ const promptMenu = () => {
         case 'Update an employee manager':
           updateManager();
           break;
+        case 'Delete a department':
+          deleteDepartment();
+          break;
+        case 'Delete a role':
+          deleteRole();
+          break;
+        case 'Delete an employee':
+          deleteEmployee();
+          break;
          
         default:
           db.end();
@@ -77,7 +89,7 @@ const promptMenu = () => {
 
 /* Function to show all departments */
 function renderDepartments(){
-  console.log("All department...\n");
+  console.log("Showing all departments...\n");
   db.query(`SELECT * FROM departments`, (err, res) => {
     if (err) throw err;
     console.table(res);
@@ -290,8 +302,31 @@ function updateManager(){
   });
 };
 
-
-
-
-
+/* Function to delete departments */
+function deleteDepartment(){
+  db.query(`SELECT * FROM departments`, (err, res) => {
+    if (err) throw err;
+    let department = res.map(departments => ({name: departments.name, value: departments.id }));
+    inquirer.prompt([
+        {
+        type: 'list',
+        name: 'deptName',
+        message: 'Which department would you like to delete?',
+        choices: department
+        },
+    ]).then((answers) => {
+        db.query(`DELETE FROM departments WHERE ?`, 
+        [
+            {
+                id: answers.deptName,
+            },
+        ], 
+        (err, res) => {
+            if (err) throw err;
+            console.log(`\n Successfully removed the department from the database! \n`);
+            promptMenu();
+        })
+    });
+  });
+};
 
