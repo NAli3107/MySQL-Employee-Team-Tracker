@@ -37,11 +37,6 @@ const promptMenu = () => {
           "Add a role",
           "Add an employee",
           "Update an employee role",
-          "Update an employee manager",
-          "View employees by department",
-          "Delete a department",
-          "Delete a role",
-          "Delete an employee",
           "Quit",
         ],
       },
@@ -162,7 +157,7 @@ function addRole(){
 function addEmployee(){
   db.query(`SELECT * FROM roles;`, (err, res) => {
     if (err) throw err;
-    let role = res.map(roles => ({name: roles.title, value: roles.roles_id }));
+    let role = res.map(roles => ({name: roles.title, value: roles.id }));
     db.query(`SELECT * FROM employees;`, (err, res) => {
         if (err) throw err;
         let employee = res.map(employees => ({name: employees.first_name + ' ' + employees.last_name, value: employees.id}));
@@ -184,26 +179,26 @@ function addEmployee(){
                 choices: role
             },
             {
-                name: 'manager',
                 type: 'list',
+                name: 'manager',
                 message: 'Who is the new employee\'s manager?',
                 choices: employee
             }
         ]).then((answers) => {
-            db.query(`INSERT INTO employee SET ?`, 
+            db.query(`INSERT INTO employees SET ?`, 
             {
                 first_name: answers.firstName,
                 last_name: answers.lastName,
                 role_id: answers.role,
                 manager_id: answers.manager,
             }, 
-            (err, res) => {
-                if (err) throw err;
-            })
-            db.query(`INSERT INTO role SET ?`, 
-            {
-                department_id: answers.dept,
-            }, 
+            // (err, res) => {
+            //     if (err) throw err;
+            // })
+            // db.query(`INSERT INTO roles SET ?`, 
+            // {
+            //     department_id: answers.deptName,
+            // }, 
             (err, res) => {
                 if (err) throw err;
                 console.log(`\n ${answers.firstName} ${answers.lastName} successfully added to database! \n`);
@@ -235,13 +230,13 @@ function updateEmployee(){
                 choices: role
             },
         ]).then((answers) => {
-            db.query(`UPDATE employee SET ? WHERE ?`, 
+            db.query(`UPDATE employees SET ? WHERE ?`, 
             [
                 {
                     role_id: answers.newRole,
                 },
                 {
-                    employee_id: answers.employee,
+                    id: answers.employee,
                 },
             ], 
             (err, res) => {
