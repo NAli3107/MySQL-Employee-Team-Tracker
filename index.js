@@ -334,7 +334,7 @@ function employeeByDepartment(){
 }
 
 function deleteDepartment(){
-  db.query(`SELECT * FROM departments ORDER BY department.id ASC;`, (err, res) => {
+  db.query(`SELECT * FROM departments ORDER BY departments.id ASC;`, (err, res) => {
     if (err) throw err;
     let department = res.map(departments => ({name: departments.name, value: departments.id }));
     inquirer.prompt([
@@ -360,8 +360,59 @@ function deleteDepartment(){
   });
 };
 
-function deleteRole()
-function deleteEmployee()
+function deleteRole(){
+  db.query(`SELECT * FROM roles ORDER BY roles.id ASC;`, (err, res) => {
+    if (err) throw err;
+    let role = res.map(roles => ({name: roles.title, value: roles.id }));
+    inquirer.prompt([
+        {
+        type: 'list',
+        name: 'title',
+        message: 'Which role would you like to remove?',
+        choices: role
+        },
+    ]).then((answers) => {
+        db.query(`DELETE FROM role WHERE ?`, 
+        [
+            {
+                role_id: answers.title,
+            },
+        ], 
+        (err, res) => {
+            if (err) throw err;
+            console.log(`\n Successfully removed the role from the database! \n`);
+            promptMenu();
+        })
+    });
+  });
+};
+
+function deleteEmployee(){
+  db.query(`SELECT * FROM employees ORDER BY employees.id ASC;`, (err, res) => {
+    if (err) throw err;
+    let employee = res.map(employees => ({name: employees.first_name + ' ' + employees.last_name, value: employees.id }));
+    inquirer.prompt([
+        {
+            type: 'list',  
+            name: 'employee',
+            message: 'Which employee would you like to remove?',
+            choices: employee
+        },
+    ]).then((answers) => {
+        db.query(`DELETE FROM employee WHERE ?`, 
+        [
+            {
+                employee_id: answers.employee,
+            },
+        ], 
+        (err, res) => {
+            if (err) throw err;
+            console.log(`\n Successfully removed the employee from the database! \n`);
+            promptMenu();
+        })
+    });
+  });
+};
 
 
 
