@@ -137,18 +137,55 @@ function addDepartment(){
       name: 'addDepartment',
       message: 'What is the name of the department you would like to add?'
     }
-  ]).then(answer => {
+  ]).then(answers => {
     const sql = `INSERT INTO department (name)
                 VALUES (?)`;
-    connection.query(sql, answer.addDepartment, (err, result) => {
+    connection.query(sql, answers.addDepartment, (err, result) => {
       if (err) throw err;
-      console.log('Added ' + answer.addDepartment + " to departments!"); 
+      console.log('Added ' + answers.addDepartment + " to departments!"); 
 
       renderDepartments();
   });
 });
-}
-function addRole()
+};
+
+function addRole(){
+  connection.query(`SELECT * FROM department;`, (err, res) => {
+    if (err) throw err;
+    let departments = res.map(department => ({name: department.department_name, value: department.department_id }));
+  inquirer.prompt([
+    {
+      type: 'input', 
+      name: 'role',
+      message: "What role do you want to add?"
+    },
+    {
+      type: 'input', 
+      name: 'salary',
+      message: "What is the salary of this role?",
+    },
+    {
+      type: 'list',
+      name: 'deptName',
+      message: 'Which department do you want to add the new role to?',
+      choices: departments
+    }
+  ]).then((answers) => {
+    connection.query(`INSERT INTO role SET ?`, 
+    {
+        title: answers.title,
+        salary: answers.salary,
+        department_id: answers.deptName,
+    },
+    (err, res) => {
+        if (err) throw err;
+        console.log(`\n ${answers.title} successfully added to database! \n`);
+        promptMenu();
+    })
+  })
+  })
+};
+
 function addEmployee()
 function updateEmployee()
 function updateManager()
