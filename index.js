@@ -46,59 +46,47 @@ const promptMenu = () => {
         ],
       },
     ])
-    .then((answers) => {
-      const { choices } = answers;
-
-      if (choices === "View all departments") {
-        renderDepartments();
-      }
-
-      if (choices === "View all roles") {
-        showRoles();
-      }
-
-      if (choices === "View all employees") {
-        renderEmployees();
-      }
-
-      if (choices === "Add a department") {
-        addDepartment();
-      }
-
-      if (choices === "Add a role") {
-        addRole();
-      }
-
-      if (choices === "Add an employee") {
-        addEmployee();
-      }
-
-      if (choices === "Update an employee role") {
-        updateEmployee();
-      }
-
-      if (choices === "Update an employee manager") {
-        updateManager();
-      }
-
-      if (choices === "View employees by department") {
-        employeeByDepartment();
-      }
-
-      if (choices === "Delete a department") {
-        deleteDepartment();
-      }
-
-      if (choices === "Delete a role") {
-        deleteRole();
-      }
-
-      if (choices === "Delete an employee") {
-        deleteEmployee();
-      }
-
-      if (choices === "Quit") {
-        db.quit();
+    .then(options => {
+      switch (options.selectOptions) {
+        case 'View all the Departments':
+          renderDepartments();
+          break;
+        case 'Add a Department':
+          showRoles();
+          break;
+        case 'Delete a Department':
+          renderEmployees();
+          break;
+        case 'View all the Roles':
+          addDepartment();
+          break;
+        case 'Add a Role':
+          addRole();
+          break;
+        case 'Delete a Role':
+          addEmployee();
+          break;
+        case 'View all the Employee':
+          updateEmployee();
+          break;
+        case 'Add a Employee':
+          updateManager();
+          break;
+        case 'Delete a Employee':
+          employeeByDepartment();
+          break;
+        case 'Update a Employee role':
+          deleteDepartment();
+          break;
+        case `Update a Employee manager's name`:
+          deleteRole()
+          break;
+        case 'Show Employee by department':
+          deleteEmployee();
+          break;
+         
+        default:
+          db.quit();
       }
     });
 };
