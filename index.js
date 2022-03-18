@@ -330,3 +330,30 @@ function deleteDepartment(){
   });
 };
 
+/* Function to delete role */
+function deleteRole(){
+  db.query(`SELECT * FROM roles`, (err, res) => {
+    if (err) throw err;
+    let role = res.map(roles => ({name: roles.title, value: roles.id }));
+    inquirer.prompt([
+        {
+        type: 'list',
+        name: 'title',
+        message: 'Which role would you like to delete?',
+        choices: role
+        },
+    ]).then((answers) => {
+        db.query(`DELETE FROM roles WHERE ?`, 
+        [
+            {
+                id: answers.title,
+            },
+        ], 
+        (err, res) => {
+            if (err) throw err;
+            console.log(`\n Successfully removed the role from the database! \n`);
+            promptMenu();
+        })
+    });
+  });
+};
