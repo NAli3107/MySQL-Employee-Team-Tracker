@@ -152,7 +152,7 @@ function addDepartment(){
 function addRole(){
   db.query(`SELECT * FROM departments;`, (err, res) => {
     if (err) throw err;
-    let departments = res.map(department => ({name: department.department_name, value: department.department_id }));
+    let department = res.map(departments => ({name: departments.names, value: departments.id }));
   inquirer.prompt([
     {
       type: 'input', 
@@ -168,7 +168,7 @@ function addRole(){
       type: 'list',
       name: 'deptName',
       message: 'Which department do you want to add the new role to?',
-      choices: departments
+      choices: department
     }
   ]).then((answers) => {
     db.query(`INSERT INTO roles SET ?`, 
@@ -192,7 +192,7 @@ function addEmployee(){
     let role = res.map(roles => ({name: roles.title, value: roles.roles_id }));
     db.query(`SELECT * FROM employees;`, (err, res) => {
         if (err) throw err;
-        let employee = res.map(employees => ({name: employees.first_name + ' ' + employees.last_name, value: employees.employees_id}));
+        let employee = res.map(employees => ({name: employees.first_name + ' ' + employees.last_name, value: employees.id}));
         inquirer.prompt([
             {
                 type: 'input',
@@ -241,7 +241,46 @@ function addEmployee(){
 })
 }
 
-function updateEmployee()
+function updateEmployee(){
+  db.query(`SELECT * FROM roles;`, (err, res) => {
+    if (err) throw err;
+    let role = res.map(roles => ({name: roles.title, value: roles.id }));
+    db.query(`SELECT * FROM employees;`, (err, res) => {
+        if (err) throw err;
+        let employee = res.map(employees => ({name: employees.first_name + ' ' + employees.last_name, value: employees.id }));
+        inquirer.prompt([
+            {
+                type: 'list',  
+                name: 'employee',
+                message: 'Which employee would you like to update the role for?',
+                choices: employee
+            },
+            {
+                type: 'list',
+                name: 'newRole',
+                message: 'What should the employee\'s new role be?',
+                choices: role
+            },
+        ]).then((answers) => {
+            db.query(`UPDATE employee SET ? WHERE ?`, 
+            [
+                {
+                    role_id: answers.newRole,
+                },
+                {
+                    employee_id: answers.employee,
+                },
+            ], 
+            (err, res) => {
+                if (err) throw err;
+                console.log(`\n Successfully updated employee's role in the database! \n`);
+                promptMenu();
+            })
+        });
+    });
+  });
+};
+
 function updateManager()
 function employeeByDepartment()
 function deleteDepartment()
