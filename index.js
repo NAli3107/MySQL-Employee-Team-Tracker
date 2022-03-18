@@ -138,9 +138,9 @@ function addDepartment(){
       message: 'What is the name of the department you would like to add?'
     }
   ]).then(answers => {
-    const sql = `INSERT INTO department (name)
+    const sql = `INSERT INTO departments (names)
                 VALUES (?)`;
-    connection.query(sql, answers.addDepartment, (err, result) => {
+    db.query(sql, answers.addDepartment, (err, result) => {
       if (err) throw err;
       console.log('Added ' + answers.addDepartment + " to departments!"); 
 
@@ -150,7 +150,7 @@ function addDepartment(){
 };
 
 function addRole(){
-  connection.query(`SELECT * FROM department;`, (err, res) => {
+  db.query(`SELECT * FROM departments;`, (err, res) => {
     if (err) throw err;
     let departments = res.map(department => ({name: department.department_name, value: department.department_id }));
   inquirer.prompt([
@@ -171,7 +171,7 @@ function addRole(){
       choices: departments
     }
   ]).then((answers) => {
-    connection.query(`INSERT INTO role SET ?`, 
+    db.query(`INSERT INTO roles SET ?`, 
     {
         title: answers.title,
         salary: answers.salary,
@@ -183,10 +183,64 @@ function addRole(){
         promptMenu();
     })
   })
-  })
+})
 };
 
-function addEmployee()
+function addEmployee(){
+  db.query(`SELECT * FROM roles;`, (err, res) => {
+    if (err) throw err;
+    let role = res.map(roles => ({name: roles.title, value: roles.roles_id }));
+    db.query(`SELECT * FROM employees;`, (err, res) => {
+        if (err) throw err;
+        let employee = res.map(employees => ({name: employees.first_name + ' ' + employees.last_name, value: employees.employees_id}));
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'firstName',
+                message: 'What is the new employee\'s first name?'
+            },
+            {
+                type: 'input',
+                name: 'lastName',
+                message: 'What is the new employee\'s last name?'
+            },
+            {
+                type: 'list',
+                name: 'role',
+                message: 'What is the new employee\'s title?',
+                choices: role
+            },
+            {
+                name: 'manager',
+                type: 'list',
+                message: 'Who is the new employee\'s manager?',
+                choices: employee
+            }
+        ]).then((answers) => {
+            db.query(`INSERT INTO employee SET ?`, 
+            {
+                first_name: answers.firstName,
+                last_name: answers.lastName,
+                role_id: answers.role,
+                manager_id: answers.manager,
+            }, 
+            (err, res) => {
+                if (err) throw err;
+            })
+            db.query(`INSERT INTO role SET ?`, 
+            {
+                department_id: answers.dept,
+            }, 
+            (err, res) => {
+                if (err) throw err;
+                console.log(`\n ${answers.firstName} ${answers.lastName} successfully added to database! \n`);
+                promptMenu();
+            })
+        })
+    })
+})
+}
+
 function updateEmployee()
 function updateManager()
 function employeeByDepartment()
