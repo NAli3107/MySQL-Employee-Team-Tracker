@@ -130,7 +130,24 @@ function renderEmployees(){
 })
 };
 
-function addDepartment()
+function addDepartment(){
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'addDepartment',
+      message: 'What is the name of the department you would like to add?'
+    }
+  ]).then(answer => {
+    const sql = `INSERT INTO department (name)
+                VALUES (?)`;
+    connection.query(sql, answer.addDepartment, (err, result) => {
+      if (err) throw err;
+      console.log('Added ' + answer.addDepartment + " to departments!"); 
+
+      renderDepartments();
+  });
+});
+}
 function addRole()
 function addEmployee()
 function updateEmployee()
