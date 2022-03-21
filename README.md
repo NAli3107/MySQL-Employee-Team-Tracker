@@ -57,7 +57,7 @@ README Generator GIF:
 
 <img src="./assets/images/Employee-Tracker-GIF.gif">
 
-[README Generator Video Link](https://drive.google.com/file/d/1VUXjCGz-s1VbB4QmhfOOmj9gO8vJYKmS/view)
+[Employee Tracker Video Link](https://drive.google.com/file/d/1VUXjCGz-s1VbB4QmhfOOmj9gO8vJYKmS/view)
 
 ## Contact
 
